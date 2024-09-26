@@ -22,5 +22,10 @@ class KhachHang extends Authenticatable
     protected $hidden = [
         'MatKhau', 
     ];
+
+    public function getAuthPassword()
+    {
+        return $this->MatKhau;
+    }
 }
 

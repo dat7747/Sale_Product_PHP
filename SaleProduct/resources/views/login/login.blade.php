@@ -22,6 +22,7 @@
             }
         }
 
+        /* Các hiệu ứng khác */
         .input-animation {
             position: relative;
         }
@@ -61,28 +62,31 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center">
-
+<body class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center fade-in">
     <!-- Form đăng nhập -->
     <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-lg fade-in">
         <h2 class="text-3xl font-bold text-center mb-8">Đăng Nhập</h2>
 
-        <!-- Email -->
-        <div class="mb-6 input-animation">
-            <input type="email" id="email" class="border p-2 w-full focus:outline-none focus:border-blue-500" placeholder=" " required />
-            <label for="email">Email</label>
-        </div>
+        <!-- Form đăng nhập -->
+        <form action="{{ route('login.process') }}" method="POST">
+            @csrf
+            <!-- Email -->
+            <div class="mb-6 input-animation">
+                <input type="email" id="email" name="email" class="border p-2 w-full focus:outline-none focus:border-blue-500" placeholder=" " required />
+                <label for="email">Email</label>
+            </div>
 
-        <!-- Password -->
-        <div class="mb-6 input-animation">
-            <input type="password" id="password" class="border p-2 w-full focus:outline-none focus:border-blue-500" placeholder=" " required />
-            <label for="password">Mật Khẩu</label>
-        </div>
+            <!-- Password -->
+            <div class="mb-6 input-animation">
+                <input type="password" id="password" name="password" class="border p-2 w-full focus:outline-none focus:border-blue-500" placeholder=" " required />
+                <label for="password">Mật Khẩu</label>
+            </div>
 
-        <!-- Nút đăng nhập -->
-        <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
-            Đăng Nhập
-        </button>
+            <!-- Nút đăng nhập -->
+            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
+                Đăng Nhập
+            </button>
+        </form>
 
         <!-- Đăng ký và quên mật khẩu -->
         <div class="text-center mt-6">

@@ -39,7 +39,7 @@
                         @php
                             \Log::info('Authenticated user:', [Auth::user()]);
                         @endphp
-                        <li><a href="#" class="hover:text-yellow-500 transition">{{ Auth::user()->HoTen }}</a></li>
+                        <li><a href="/info" class="hover:text-yellow-500 transition">{{ Auth::user()->HoTen }}</a></li>
                     @else
                         @php
                             \Log::info('Authenticated user:', [Auth::user()]);

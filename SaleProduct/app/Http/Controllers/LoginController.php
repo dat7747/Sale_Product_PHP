@@ -7,14 +7,55 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
     public function  index(){
         return view('login.login');
     }
+    
+    public function processLogin(Request $request)
+{
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
 
+    // Trim email và password
+    $credentials['email'] = trim($credentials['email']);
+    $passwordInput = trim($credentials['password']);
 
+    // Log email và mật khẩu (chú ý không log mật khẩu thực tế)
+    Log::info('Đang kiểm tra thông tin đăng nhập với email: ' . $credentials['email']);
+    Log::info('Mật khẩu nhập vào: ' . $passwordInput);
+
+    // Tìm khách hàng trong bảng 'khachhang'
+    $khachHang = KhachHang::where('Email', $credentials['email'])->first(); // Đảm bảo trường Email viết hoa đúng
+
+    // Kiểm tra và log kết quả
+    if ($khachHang) {
+        Log::info('Tìm thấy khách hàng với email: ' . $credentials['email']);
+
+        // So sánh mật khẩu nhập vào với mật khẩu được mã hóa trong cơ sở dữ liệu
+        if (Hash::check($passwordInput, $khachHang->MatKhau)) { // Sử dụng MatKhau
+            Log::info('Mật khẩu khớp. Đăng nhập thành công.');
+            Auth::login($khachHang);
+            $request->session()->regenerate();
+            return redirect()->route('home')->with('success', 'Đăng nhập thành công!');
+        } else {
+            Log::warning('Mật khẩu không khớp cho email: ' . $credentials['email']);
+        }
+    } else {
+        Log::warning('Không tìm thấy khách hàng với email: ' . $credentials['email']);
+    }
+
+    return back()->withErrors([
+        'email' => 'Thông tin đăng nhập không chính xác',
+    ])->withInput();
+}
+
+    
     public function register(){
         return view ('login.register');
     }
@@ -56,5 +97,18 @@ class LoginController extends Controller
             return redirect()->back()->with('error', 'Đăng nhập thất bại.');
         }
     }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
     
+        // Invalidate the session.
+        $request->session()->invalidate();
+    
+        // Regenerate the session token to prevent session fixation attacks.
+        $request->session()->regenerateToken();
+    
+        // Chuyển hướng người dùng về trang đăng nhập hoặc trang chủ.
+        return redirect('/login');
+    }
 }
