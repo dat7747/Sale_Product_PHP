@@ -35,10 +35,18 @@
                     </li>
 
                     <li><a href="#" class="hover:text-yellow-500 transition">Liên Hệ</a></li>
-
-                    <!-- Nút Đăng Nhập & Đăng Ký -->
-                    <li><a href="/login" class="hover:text-yellow-500 transition">Đăng Nhập</a></li>
-                    <li><a href="/register" class="hover:text-yellow-500 transition">Đăng Ký</a></li>
+                    @if(Auth::check())
+                        @php
+                            \Log::info('Authenticated user:', [Auth::user()]);
+                        @endphp
+                        <li><a href="#" class="hover:text-yellow-500 transition">{{ Auth::user()->HoTen }}</a></li>
+                    @else
+                        @php
+                            \Log::info('Authenticated user:', [Auth::user()]);
+                        @endphp
+                        <li><a href="/login" class="hover:text-yellow-500 transition">Đăng Nhập</a></li>
+                        <li><a href="/register" class="hover:text-yellow-500 transition">Đăng Ký</a></li>
+                    @endif
 
                     <!-- Icon Giỏ Hàng -->
                     <li>

@@ -4,18 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class KhachHang extends Model
+class KhachHang extends Authenticatable 
 {
-    //khai báo tên table
+    use HasFactory, Notifiable;
+
     protected $table = 'khachhang';
+    protected $primaryKey = 'KhachHangID';
 
-    //khai báo khóa chính
-    protected $primarykey = 'KhachHangID';
-
-    //các thuộc tính được điền vào form
     protected $fillable = [
         'HoTen','Email','SoDienThoai','DiaChi','MatKhau',
     ];
-    use HasFactory;
+
+
+    protected $hidden = [
+        'MatKhau', 
+    ];
 }
+
