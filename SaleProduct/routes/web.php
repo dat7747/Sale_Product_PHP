@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\KhachHangController;
+use App\Http\Controllers\SanPhamController;
+use App\Http\Controllers\LoaiSanPhamController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,4 +35,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
     // Route xử lý info
     Route::get('/info', [KhachHangController::class, 'index'])->name('info');
+
+    //Route quản lý sản phẩm 
+    Route::resource('sanpham', SanPhamController::class);
+
+    //Route quản lý loai sản phẩm 
+    Route::resource('loaisanpham', LoaiSanPhamController::class);
 });

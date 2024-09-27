@@ -15,7 +15,7 @@ class KhachHang extends Authenticatable
     protected $primaryKey = 'KhachHangID';
 
     protected $fillable = [
-        'HoTen','Email','SoDienThoai','DiaChi','MatKhau',
+        'HoTen','Email','SoDienThoai','DiaChi','MatKhau','role',
     ];
 
 

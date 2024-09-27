@@ -16,44 +16,38 @@ class LoginController extends Controller
     }
     
     public function processLogin(Request $request)
-{
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
-    ]);
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
-    // Trim email và password
-    $credentials['email'] = trim($credentials['email']);
-    $passwordInput = trim($credentials['password']);
+        // Trim email và password
+        $credentials['email'] = trim($credentials['email']);
+        $passwordInput = trim($credentials['password']);
 
-    // Log email và mật khẩu (chú ý không log mật khẩu thực tế)
-    Log::info('Đang kiểm tra thông tin đăng nhập với email: ' . $credentials['email']);
-    Log::info('Mật khẩu nhập vào: ' . $passwordInput);
+        // Tìm khách hàng trong bảng 'khachhang'
+        $khachHang = KhachHang::where('Email', $credentials['email'])->first(); // Đảm bảo trường Email viết hoa đúng
 
-    // Tìm khách hàng trong bảng 'khachhang'
-    $khachHang = KhachHang::where('Email', $credentials['email'])->first(); // Đảm bảo trường Email viết hoa đúng
-
-    // Kiểm tra và log kết quả
-    if ($khachHang) {
-        Log::info('Tìm thấy khách hàng với email: ' . $credentials['email']);
-
-        // So sánh mật khẩu nhập vào với mật khẩu được mã hóa trong cơ sở dữ liệu
-        if (Hash::check($passwordInput, $khachHang->MatKhau)) { // Sử dụng MatKhau
-            Log::info('Mật khẩu khớp. Đăng nhập thành công.');
-            Auth::login($khachHang);
-            $request->session()->regenerate();
-            return redirect()->route('home')->with('success', 'Đăng nhập thành công!');
+        // Kiểm tra và log kết quả
+        if ($khachHang) {
+        
+            // So sánh mật khẩu nhập vào với mật khẩu được mã hóa trong cơ sở dữ liệu
+            if (Hash::check($passwordInput, $khachHang->MatKhau)) { // Sử dụng MatKhau
+                Auth::login($khachHang);
+                $request->session()->regenerate();
+                return redirect()->route('home')->with('success', 'Đăng nhập thành công!');
+            } else {
+                Log::warning('Mật khẩu không khớp cho email: ' . $credentials['email']);
+            }
         } else {
-            Log::warning('Mật khẩu không khớp cho email: ' . $credentials['email']);
+            Log::warning('Không tìm thấy khách hàng với email: ' . $credentials['email']);
         }
-    } else {
-        Log::warning('Không tìm thấy khách hàng với email: ' . $credentials['email']);
-    }
 
-    return back()->withErrors([
-        'email' => 'Thông tin đăng nhập không chính xác',
-    ])->withInput();
-}
+        return back()->withErrors([
+            'email' => 'Thông tin đăng nhập không chính xác',
+        ])->withInput();
+    }
 
     
     public function register(){
@@ -81,6 +75,7 @@ class LoginController extends Controller
             'SoDienThoai' => $request->phone,
             'DiaChi' => $request->address,
             'MatKhau' => Hash::make($request->password),
+            'role' => 0,
         ]);
     
         // Đăng nhập ngay sau khi đăng ký thành công
