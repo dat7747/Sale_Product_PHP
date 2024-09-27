@@ -83,12 +83,8 @@ class LoginController extends Controller
     
         // Kiểm tra xem đăng nhập có thành công không
         if (Auth::check()) {
-            \Log::info('Current session:', [session()->all()]);
-            \Log::info('User is logged in:', [Auth::user()]); // Log thông tin người dùng
-            \Log::info('Redirecting to home after successful registration.');
             return redirect()->route('home')->with('success', 'Đăng ký thành công!'); // Chuyển hướng đến trang chủ
         } else {
-            \Log::warning('User login failed');
             return redirect()->back()->with('error', 'Đăng nhập thất bại.');
         }
     }

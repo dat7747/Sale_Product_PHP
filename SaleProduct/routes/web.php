@@ -30,6 +30,9 @@ Route::post('/register', [LoginController::class, 'store'])->name('register.stor
 // Route cho đăng xuất
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Route cho tìm kiếm sản phẩm
+Route::get('/sanpham/search', [SanPhamController::class, 'search'])->name('sanpham.search');
+
 
 // Route bảo vệ, chỉ cho phép người dùng đã đăng nhập
 Route::middleware(['auth'])->group(function () {
@@ -41,4 +44,5 @@ Route::middleware(['auth'])->group(function () {
 
     //Route quản lý loai sản phẩm 
     Route::resource('loaisanpham', LoaiSanPhamController::class);
+
 });
