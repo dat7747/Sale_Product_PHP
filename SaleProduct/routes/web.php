@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\KhachHangController;
 use App\Http\Controllers\SanPhamController;
 use App\Http\Controllers\LoaiSanPhamController;
+use App\Http\Controllers\CartController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,6 +19,7 @@ use App\Http\Controllers\LoaiSanPhamController;
 */
 // Route cho trang chủ
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/search', [HomeController::class, 'search'])->name('search');
 
 // Route cho trang đăng nhập
 Route::get('/login', [LoginController::class, 'index'])->name('login');
@@ -44,5 +46,8 @@ Route::middleware(['auth'])->group(function () {
 
     //Route quản lý loai sản phẩm 
     Route::resource('loaisanpham', LoaiSanPhamController::class);
+    
+    //Route quản lý giỏ hàng
+    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
 
 });

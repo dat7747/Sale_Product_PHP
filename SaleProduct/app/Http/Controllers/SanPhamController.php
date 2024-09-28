@@ -40,7 +40,7 @@ class SanPhamController extends Controller
         if ($request->hasFile('HinhAnh')) {
             $path = $request->file('HinhAnh')->store('images', 'public');
         }
-    
+        Log::info('Image Path: ' . $path);
         // Create new product
         SanPham::create([
             'TenSanPham' => $request->TenSanPham ?? '',
