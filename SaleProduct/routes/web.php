@@ -7,6 +7,7 @@ use App\Http\Controllers\KhachHangController;
 use App\Http\Controllers\SanPhamController;
 use App\Http\Controllers\LoaiSanPhamController;
 use App\Http\Controllers\CartController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -48,6 +49,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('loaisanpham', LoaiSanPhamController::class);
     
     //Route quản lý giỏ hàng
-    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
+    Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::put('/cart/{id}', [CartController::class, 'update'])->name('cart.update');
 });

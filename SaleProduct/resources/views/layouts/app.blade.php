@@ -88,10 +88,12 @@
 
                     <!-- Icon Giỏ Hàng -->
                     <li>
-                        <a href="#" class="relative">
+                        <a href="{{ route('cart.index') }}" class="relative">
                             <i class="fas fa-shopping-cart text-white text-2xl"></i>
                             <!-- Số lượng sản phẩm trong giỏ -->
-                            <span class="absolute top-0 right-0 transform translate-x-1 -translate-y-1 inline-block w-4 h-4 bg-red-500 text-white text-xs font-bold rounded-full text-center">0</span>
+                            <span class="absolute top-0 right-0 transform translate-x-1 -translate-y-1 inline-block w-4 h-4 bg-red-500 text-white text-xs font-bold rounded-full text-center">
+                                {{ $totalItems ?? 0 }}
+                            </span>
                         </a>
                     </li>
                 </ul>

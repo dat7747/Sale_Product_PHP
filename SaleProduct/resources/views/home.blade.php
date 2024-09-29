@@ -71,9 +71,16 @@
                                 <h3 class="text-lg font-bold">{{ $sanpham->TenSanPham }}</h3>
                                 <div class="flex items-center justify-between mt-1">
                                     <p class="text-gray-600">Giá: <span class="text-red-600 font-semibold">{{ number_format($sanpham->Gia, 0, ',', '.') }} VND</span></p>
-                                    <a href="#" class="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition duration-300">
-                                        <i class="fas fa-shopping-cart"></i>
-                                    </a>
+                                    
+                                    <!-- Form để thêm sản phẩm vào giỏ hàng -->
+                                    <form action="{{ route('cart.store') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="SanPhamID" value="{{ $sanpham->SanPhamID }}">
+                                        <input type="hidden" name="SoLuong" value="1">
+                                        <button type="submit" class="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition duration-300">
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -82,7 +89,6 @@
                     <p class="text-center col-span-4">Không tìm thấy sản phẩm nào.</p>
                 @endif
             </div>
-
             <!-- Phân trang -->
             <div class="mt-10 flex justify-center">
                 <nav aria-label="Page navigation">
