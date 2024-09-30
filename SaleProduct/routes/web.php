@@ -44,6 +44,9 @@ Route::middleware(['auth'])->group(function () {
 
     //Route quản lý sản phẩm 
     Route::resource('sanpham', SanPhamController::class);
+    Route::post('/sanpham/{id}/discount', [SanPhamController::class, 'luuGiamGia'])->name('sanpham.discount');
+    Route::post('/sanpham/{id}/removeDiscount', [SanPhamController::class, 'removeDiscount'])->name('sanpham.removeDiscount');
+
 
     //Route quản lý loai sản phẩm 
     Route::resource('loaisanpham', LoaiSanPhamController::class);

@@ -7,33 +7,41 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        /* Hiệu ứng hover cho menu con */
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
+    /* Hiệu ứng hover cho menu con */
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
 
-        /* Đảm bảo menu luôn hiển thị trên top */
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            background-color: white;
-            text-gray-800;
-            shadow-lg;
-            border-radius: 0.5rem;
-            z-index: 1000; /* Đảm bảo menu nằm trên tất cả các phần khác */
-            min-width: 200px; /* Chiều rộng tối thiểu cho menu con */
-            white-space: nowrap; /* Ngăn không cho nội dung xuống dòng */
-        }
+    /* Đảm bảo menu luôn hiển thị trên top */
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: white;
+        text-gray-800;
+        shadow-lg;
+        border-radius: 0.5rem;
+        z-index: 1000; /* Đảm bảo menu nằm trên tất cả các phần khác */
+        min-width: 200px; /* Chiều rộng tối thiểu cho menu con */
+        white-space: nowrap; /* Ngăn không cho nội dung xuống dòng */
+    }
 
-        /* Hiệu ứng hover cho menu con */
-        .dropdown-menu li:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
+    /* Giữ thanh menu luôn hiển thị khi cuộn */
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 1000; /* Đảm bảo menu nằm trên các thành phần khác */
+    }
+
+    /* Hiệu ứng hover cho menu con */
+    .dropdown-menu li:hover {
+        background-color: #f0f0f0;
+    }
+</style>
+
 </head>
 <body class="antialiased bg-gray-100">
     <!-- Header -->
-    <header class="bg-gray-800 text-white py-4">
+    <header class="bg-gray-800 text-white py-4" style="position: sticky; top: 0; z-index: 1000;">
         <div class="container mx-auto flex justify-between items-center px-4">
             <h1 class="text-4xl font-bold">Cửa Hàng Điện Tử</h1>
             <nav>
@@ -54,9 +62,6 @@
                     <li><a href="#" class="hover:text-yellow-500 transition">Liên Hệ</a></li>
 
                     @if(Auth::check())
-                        @php
-                            \Log::info('Authenticated user:', [Auth::user()]);
-                        @endphp
                         @if(Auth::user()->role == 1) <!-- Kiểm tra nếu là admin -->
                             <li class="relative dropdown">
                                 <a href="#" class="hover:text-yellow-500 transition">Quản Lý</a>
@@ -79,9 +84,6 @@
                             <li><a href="/info" class="hover:text-yellow-500 transition">{{ Auth::user()->HoTen }}</a></li>
                         @endif
                     @else
-                        @php
-                            \Log::info('Authenticated user:', [Auth::user()]);
-                        @endphp
                         <li><a href="/login" class="hover:text-yellow-500 transition">Đăng Nhập</a></li>
                         <li><a href="/register" class="hover:text-yellow-500 transition">Đăng Ký</a></li>
                     @endif
