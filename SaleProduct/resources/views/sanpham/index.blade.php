@@ -152,22 +152,4 @@
     }
 </style>
 <script src="{{ asset('js/sanpham/sanpham.js') }}"></script>
-<!-- <script>
-    function showDiscountListModal() {
-        document.getElementById('discountListModal').classList.remove('hidden');
-    }
-
-    function closeDiscountListModal() {
-        document.getElementById('discountListModal').classList.add('hidden');
-    }
-
-    function showDiscountModal(sanphamId) {
-        document.getElementById('discountForm').action = '/sanpham/' + sanphamId + '/discount'; // Cập nhật action cho form
-        document.getElementById('discountModal').classList.remove('hidden');
-    }
-
-    function closeDiscountModal() {
-        document.getElementById('discountModal').classList.add('hidden');
-    }
-</script> -->
 @endsection

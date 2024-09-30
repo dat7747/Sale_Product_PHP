@@ -58,6 +58,7 @@
             </div>
         </div>
     </section>
+
     <!-- Featured Products Section -->
     <section class="py-20 bg-gray-100">
         <div class="container mx-auto px-4">
@@ -89,7 +90,7 @@
                     <p class="text-center col-span-4">Không tìm thấy sản phẩm nào.</p>
                 @endif
             </div>
-            <!-- Phân trang -->
+            <!-- Pagination -->
             <div class="mt-10 flex justify-center">
                 <nav aria-label="Page navigation">
                     <ul class="inline-flex -space-x-px">
@@ -100,13 +101,11 @@
                         </li>
                         @for ($i = 1; $i <= $sanphams->lastPage(); $i++)
                             <li>
-                                <a href="{{ $sanphams->url($i) }}" class="px-4 py-2 text-sm font-medium {{ $i == $sanphams->currentPage() ? 'text-white bg-blue-600' : 'text-gray-700 bg-white' }} border border-gray-300 hover:bg-blue-500 hover:text-white transition duration-300">
-                                    {{ $i }}
-                                </a>
+                                <a href="{{ $sanphams->url($i) }}" class="px-4 py-2 text-sm font-medium {{ $sanphams->currentPage() == $i ? 'text-white bg-blue-600' : 'text-gray-700 bg-white' }} border border-gray-300 hover:bg-blue-500 hover:text-white transition duration-300">{{ $i }}</a>
                             </li>
                         @endfor
                         <li>
-                            <a href="{{ $sanphams->nextPageUrl() }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r hover:bg-blue-500 hover:text-white transition duration-300 {{ $sanphams->hasMorePages() ? '' : 'opacity-50 cursor-not-allowed' }}" {{ $sanphams->hasMorePages() ? '' : 'disabled' }}>
+                            <a href="{{ $sanphams->nextPageUrl() }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r hover:bg-blue-500 hover:text-white transition duration-300 {{ $sanphams->hasMorePages() ? '' : 'opacity-50 cursor-not-allowed' }}" {{ !$sanphams->hasMorePages() ? 'disabled' : '' }}>
                                 Sau
                             </a>
                         </li>
@@ -116,6 +115,43 @@
         </div>
     </section>
 
+    <!-- Section danh sách sản phẩm giảm giá -->
+    <section class="py-20 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-center mb-8 bg-gray-300 p-4 rounded relative">Danh Sách Sản Phẩm Giảm Giá</h2> 
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                @if($sanphamGiamGias->count() > 0)
+                    @foreach($sanphamGiamGias as $sanpham)
+                        <div class="relative bg-white p-3 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
+                            <div class="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded-br-lg">
+                                Giảm {{ $sanpham->sanPhamGiamGia->GiaGiam }}%
+                            </div>
+                            <img src="{{ asset('storage/' . $sanpham->HinhAnh) }}" alt="{{ $sanpham->TenSanPham }}" class="w-full h-48 object-cover rounded-t-lg">
+                            <div class="p-2">
+                                <h3 class="text-lg font-bold">{{ $sanpham->TenSanPham }}</h3>
+                                <div class="flex items-center justify-between mt-1">
+                                    <p class="text-gray-600">Giá Gốc: <span class="line-through">{{ number_format($sanpham->Gia, 0, ',', '.') }} VND</span></p>
+                                    <p class="text-red-600 font-semibold">Giá Giảm: <span>{{ number_format($sanpham->Gia * (1 - $sanpham->sanPhamGiamGia->GiaGiam / 100), 0, ',', '.') }} VND</span></p>
+                                </div>
+
+                                <!-- Form thêm sản phẩm vào giỏ hàng -->
+                                <form action="{{ route('cart.store') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="SanPhamID" value="{{ $sanpham->SanPhamID }}">
+                                    <input type="hidden" name="SoLuong" value="1">
+                                    <button type="submit" class="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition duration-300">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <p class="text-center col-span-4">Không có sản phẩm giảm giá nào.</p>
+                @endif
+            </div>
+        </div>
+    </section>
+
 </div>
-<script src="{{ asset('js/custom.js') }}"></script>
 @endsection

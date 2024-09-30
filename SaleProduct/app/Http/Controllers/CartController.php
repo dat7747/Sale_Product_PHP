@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\SanPham;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\View;
@@ -14,16 +14,37 @@ class CartController extends Controller
     public function index()
     {
         if (auth()->check()) {
-            $gioHangs = Cart::with('product')->where('KhachHangID', auth()->id())->get();
+            // Lấy giỏ hàng và thông tin sản phẩm liên quan
+            $gioHangs = Cart::with(['product', 'product.sanPhamGiamGia']) // Lấy cả sản phẩm và thông tin giảm giá
+                ->where('KhachHangID', auth()->id())
+                ->get();
         } else {
             $gioHangs = collect(); // Nếu chưa đăng nhập, khởi tạo một collection rỗng
+        }
+    
+        // Log thông tin sản phẩm
+        foreach ($gioHangs as $gioHang) {
+            $product = $gioHang->product;
+            $discount = $product->sanPhamGiamGia;
+    
+            if ($discount && $discount->isDiscountActive()) {
+                Log::info('Sản phẩm giảm giá', [
+                    'Tên sản phẩm' => $product->TenSanPham,
+                    'Giá gốc' => $product->Gia,
+                    'Giá giảm' => $discount->GiaGiam,
+                ]);
+            } else {
+                Log::info('Sản phẩm không giảm giá', [
+                    'Tên sản phẩm' => $product->TenSanPham,
+                    'Giá' => $product->Gia,
+                ]);
+            }
         }
     
         $totalItems = $gioHangs->sum('SoLuong');
         return view('cart.index', compact('gioHangs', 'totalItems'));
     }
     
-
     // add product in to cart
     public function store(Request $request)
     {

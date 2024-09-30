@@ -3,21 +3,33 @@
 namespace App\Http\Controllers;
 use App\Models\LoaiSanPham;
 use App\Models\SanPham;
+use App\Models\SanPhamGiamGia;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $sanphams = SanPham::query();
-        $loaiSanPhams = LoaiSanPham::all();
+        // Lấy danh sách sản phẩm có giảm giá
+        $sanphamGiamGias = SanPham::with(['sanPhamGiamGia' => function($query) {
+            $query->where('NgayBatDauGiamGia', '<=', now())
+                  ->where('NgayKetThucGiamGia', '>=', now());
+        }])
+        ->whereHas('sanPhamGiamGia', function($query) {
+            $query->where('NgayBatDauGiamGia', '<=', now())
+                  ->where('NgayKetThucGiamGia', '>=', now());
+        })
+        ->paginate(12);
     
-        // Lọc theo loại sản phẩm nếu có
+        // Lấy danh sách sản phẩm đầy đủ
+        $sanphams = SanPham::query();
+    
+        // Lọc theo loại sản phẩm
         if ($request->has('product_type') && $request->product_type != '') {
             $sanphams->where('LoaiSanPhamID', $request->product_type);
         }
     
-        // Tìm kiếm theo tên sản phẩm nếu có
+        // Tìm kiếm theo tên sản phẩm
         if ($request->has('keyword') && $request->keyword != '') {
             $sanphams->where('TenSanPham', 'like', '%' . $request->keyword . '%');
         }
@@ -31,18 +43,22 @@ class HomeController extends Controller
             }
         }
     
-        // Phân trang danh sách sản phẩm
-        $sanphams = $sanphams->paginate(12); 
+        // Phân trang
+        $sanphams = $sanphams->paginate(12);
     
-        // Trả về view cùng với các thông số lọc và phân trang
+        $loaiSanPhams = LoaiSanPham::all();
+    
+        // Trả về view
         return view('home', [
             'sanphams' => $sanphams,
+            'sanphamGiamGias' => $sanphamGiamGias,
             'loaiSanPhams' => $loaiSanPhams,
             'selectedProductType' => $request->product_type,
             'selectedSortByPrice' => $request->sort_by_price,
-            'keyword' => $request->keyword // Trả về từ khóa tìm kiếm
+            'keyword' => $request->keyword
         ]);
     }
+    
     
     public function search(Request $request)
     {

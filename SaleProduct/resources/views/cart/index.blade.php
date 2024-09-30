@@ -26,17 +26,12 @@
                     <tbody class="divide-y divide-gray-300">
                         @foreach($gioHangs as $gioHang)
                             <tr class="hover:bg-gray-100 transition duration-300">
-                                <!-- Cột tên sản phẩm -->
                                 <td class="px-6 py-4 text-left">
                                     <h3 class="text-lg font-semibold">{{ $gioHang->product->TenSanPham }}</h3>
                                 </td>
-
-                                <!-- Cột hiển thị hình ảnh sản phẩm -->
                                 <td class="px-6 py-4 text-center">
                                     <img src="{{ asset('storage/' . $gioHang->product->HinhAnh) }}" alt="{{ $gioHang->product->TenSanPham }}" class="w-24 h-24 object-cover rounded-lg shadow-md">
                                 </td>
-
-                                <!-- Cột số lượng -->
                                 <td class="px-6 py-4 text-center">
                                     <form action="{{ route('cart.update', $gioHang->GioHangID) }}" method="POST" class="inline-flex items-center">
                                         @csrf
@@ -46,19 +41,31 @@
                                         <button type="submit" name="action" value="increase" class="bg-gray-300 text-black px-2 py-1 rounded-lg hover:bg-gray-400 transition duration-300">+</button>
                                     </form>
                                 </td>
-
-
-                                <!-- Cột giá sản phẩm -->
                                 <td class="px-6 py-4 text-center">
-                                    <span class="text-lg font-semibold text-red-500">{{ number_format($gioHang->product->Gia, 0, ',', '.') }} VND</span>
+                                    @if ($gioHang->product->sanPhamGiamGia && $gioHang->product->sanPhamGiamGia->isDiscountActive())
+                                        @php
+                                            // Tính giá giảm theo phần trăm
+                                            $giaGoc = $gioHang->product->Gia; // Giá gốc
+                                            $phanTramGiam = $gioHang->product->sanPhamGiamGia->GiaGiam; // Giá giảm (20% ở đây)
+                                            $giaGiam = $giaGoc * (1 - ($phanTramGiam / 100)); // Tính giá giảm
+                                        @endphp
+                                        <span class="text-lg font-semibold text-red-500">{{ number_format($giaGiam, 0, ',', '.') }} VND</span>
+                                        <div class="text-gray-500 line-through">{{ number_format($gioHang->product->Gia, 0, ',', '.') }} VND</div>
+                                    @else
+                                        <span class="text-lg font-semibold">{{ number_format($gioHang->product->Gia, 0, ',', '.') }} VND</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    @php
+                                        // Tính giá dựa trên giá gốc hoặc giá giảm
+                                        $gia = $gioHang->product->sanPhamGiamGia && $gioHang->product->sanPhamGiamGia->isDiscountActive() 
+                                            ? $giaGiam 
+                                            : $gioHang->product->Gia; // Nếu có giảm giá thì lấy giá giảm
+                                        $tong = $gia * $gioHang->SoLuong;
+                                    @endphp
+                                    <span class="text-lg font-semibold">{{ number_format($tong, 0, ',', '.') }} VND</span>
                                 </td>
 
-                                <!-- Cột tổng giá -->
-                                <td class="px-6 py-4 text-center">
-                                    <span class="text-lg font-semibold">{{ number_format($gioHang->product->Gia * $gioHang->SoLuong, 0, ',', '.') }} VND</span>
-                                </td>
-
-                                <!-- Cột hành động -->
                                 <td class="px-6 py-4 text-center">
                                     <form action="{{ route('cart.destroy', $gioHang->GioHangID) }}" method="POST">
                                         @csrf
@@ -77,7 +84,9 @@
                 <div class="text-right">
                     <h3 class="text-xl font-bold">Tổng thanh toán: 
                         <span class="text-2xl text-red-500">
-                            {{ number_format($gioHangs->sum(fn($gioHang) => $gioHang->product->Gia * $gioHang->SoLuong), 0, ',', '.') }} VND
+                            {{ number_format($gioHangs->sum(fn($gioHang) => ($gioHang->product->sanPhamGiamGia && $gioHang->product->sanPhamGiamGia->isDiscountActive() ? 
+                                $giaGiam = $gioHang->product->Gia * (1 - ($gioHang->product->sanPhamGiamGia->GiaGiam / 100)) : 
+                                $gioHang->product->Gia) * $gioHang->SoLuong), 0, ',', '.') }} VND
                         </span>
                     </h3>
                     <a href="#" class="mt-4 inline-block bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300">Thanh Toán</a>
